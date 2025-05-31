@@ -8,10 +8,10 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const NAVIGATION = [
   { kind: "header", title: "Main items" },
-  { segment: "", title: "Dasboard", icon: <DashboardIcon /> },
-  { segment: "orders", title: "Orders", icon: <ShoppingCartIcon /> },
-  { segment: "products", title: "Products", icon: <LayersIcon /> },
-  { segment: "other", title: "Other", icon: <BarChartIcon /> },
+  { segment: "home", title: "Dasboard", icon: <DashboardIcon /> },
+  { segment: "home/orders", title: "Orders", icon: <ShoppingCartIcon /> },
+  { segment: "home/products", title: "Products", icon: <LayersIcon /> },
+  { segment: "home/other", title: "Other", icon: <BarChartIcon /> },
 ];
 
 const demoTheme = extendTheme({
@@ -53,7 +53,6 @@ const Dashbord = () => {
     >
       <DashboardLayout>
         <PageContainer>
-          {/* Child routes will render here */}
           <Outlet />
         </PageContainer>
       </DashboardLayout>
