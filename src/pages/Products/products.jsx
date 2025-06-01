@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getProducts } from "../../entitis/reducers/getQuery";
+import { changeProduct, getProducts } from "../../entitis/reducers/getQuery";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -143,7 +143,10 @@ const Products = () => {
                 <TableCell align="center">${row.price}</TableCell>
                 <TableCell align="center">
                   <div className="flex justify-center gap-[5px]">
-                    <BorderColorIcon sx={{ color: "#1E5EFF" }} />
+                    <BorderColorIcon onClick={()=>{
+                      dispatch(changeProduct(row.id)),
+                      navigate("/home/products/edit")
+                    }} sx={{ color: "#1E5EFF" }} />
                     <DeleteIcon onClick={() => openDelModal(row)} sx={{ color: "#F04438" }} />
                   </div>
                 </TableCell>

@@ -15,8 +15,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import img from "../../shared/imgs/dc40ba897215f42e5883a64157f0aa3a4d1a866a.JPG"
-import img2 from "../../shared/imgs/3cc943ca7e210f637fc0504b7d93cd207df744c2.PNG"
+import img from "../../shared/imgs/dc40ba897215f42e5883a64157f0aa3a4d1a866a.jpg"
+import img2 from "../../shared/imgs/3cc943ca7e210f637fc0504b7d93cd207df744c2.png"
 import { Button, MenuItem, TextField } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -65,6 +65,7 @@ const Banners = () => {
                 <Link to={"/home/other"} className="p-[10px] text-[16px] font-[500]">Categories</Link>
                 <Link to={"/home/other/brands"} className="p-[10px] text-[16px] font-[500]">Brands</Link>
                 <Link to={"/home/other/banners"} className="px-[10px] py-[5px] text-[16px] rounded-[5px] font-[600] text-[#1D4ED8] bg-[#DBEAFE]">Banners</Link>
+                <Link to={"/home/other/subCategories"} className="px-[10px] py-[5px] text-[16px] font-[500]"> Sub Categories</Link>
             </div>
             <div className="flex flex-col gap-y-[30px] md:flex-row my-[30px] justify-between">
                 <div className="flex flex-col gap-[10px] w-[48%]">

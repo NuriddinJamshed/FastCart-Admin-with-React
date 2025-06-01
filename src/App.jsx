@@ -8,6 +8,8 @@ import AddProduct from "./pages/Products/addProduct";
 import Brands from "./pages/Other/brands";
 import Banners from "./pages/Other/banners";
 import Login from "./pages/login/login";
+import EditProduct from "./pages/Products/editProduct";
+import SubCategories from "./pages/Other/subCategories";
 function App() {
   const router = createBrowserRouter([
   {
@@ -39,12 +41,20 @@ function App() {
         element: <AddProduct />
       },
       {
+        path:"products/edit",
+        element:<EditProduct/>
+      },
+      {
         path: "other/brands",
         element: <Brands />
       },
       {
         path: "other/banners",
         element: <Banners />
+      },
+      {
+        path: "other/subCategories",
+        element: <SubCategories/>
       }
     ],
   },

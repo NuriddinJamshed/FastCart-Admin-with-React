@@ -49,6 +49,15 @@ export const getColors = createAsyncThunk("get/getColors", async()=>{
   }
 })
 
+export const getProductById = createAsyncThunk("get/getProductById",async(id)=>{
+  try {
+    let {data} = await axios.get(`${API}/Product/get-product-by-id?id=${id}`)
+    return data.data
+  } catch (error) {
+    console.error(error);
+  }
+})
+
 const getSlice = createSlice({
   name: 'get',
   initialState: { 
@@ -56,9 +65,15 @@ const getSlice = createSlice({
     categories:[],
     brands:[],
     colors:[],
-    subCategories:[]
+    subCategories:[],
+    productId:null,
+    product:{}
    },
-  reducers: {},
+  reducers: {
+    changeProduct:(state,actions)=>{
+      state.productId = actions.payload
+    }
+  },
   extraReducers: (builder)=>{
     builder.addCase(getProducts.fulfilled, (state, action)=>{
         state.products = action.payload.products
@@ -75,7 +90,12 @@ const getSlice = createSlice({
     builder.addCase(getSubCategories.fulfilled,(state,action)=>{
       state.subCategories = action.payload
     })
+    builder.addCase(getProductById.fulfilled,(state,action)=>{
+      state.product=action.payload
+    })
   }
 });
+
+export const { changeProduct } = getSlice.actions
 
 export default getSlice.reducer;
