@@ -59,7 +59,7 @@ const Products = () => {
   );
 
   return <div>
-    <Button onClick={() => navigate("/home/products/add")} className='h-[6vh] absolute left-[88%] bottom-[70px]' variant="contained" startIcon={<AddIcon />}>Add order</Button>
+    <Button onClick={() => navigate("/home/products/add")} className='h-[6vh] absolute left-[88%] bottom-[70px]' variant="contained" startIcon={<AddIcon />}>Add product</Button>
     <div className='my-[20px] flex flex-col justify-between md:flex-row'>
       <div className='flex flex-col w-[80%] md:flex-row gap-[30px]'>
         <div>

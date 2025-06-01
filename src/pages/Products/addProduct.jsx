@@ -22,13 +22,19 @@ import {
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 import {
+  addColor,
   addProduct,
   clearAddProductState,
 } from '../../entitis/reducers/postQuery'
+import { GridCloseIcon } from '@mui/x-data-grid'
+import { useSnackbar } from 'notistack'; 
+
 
 const AddProduct = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+    const { enqueueSnackbar } = useSnackbar(); 
+
 
   const categories = useSelector((store) => store.get.subCategories)
   const brands = useSelector((store) => store.get.brands)
@@ -57,6 +63,10 @@ const AddProduct = () => {
   const [openLoadingSnackbar, setOpenLoadingSnackbar] = useState(false)
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false)
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
+
+  const [colorModal, setColorModal] = useState(false)
+  const [colorName, setColorName] = useState("")
+  const [colorCode, setColorCode] = useState("")
 
   useEffect(() => {
     dispatch(getSubCategories())
@@ -127,6 +137,45 @@ const AddProduct = () => {
     setOpenErrorSnackbar(false)
     dispatch(clearAddProductState())
   }
+
+  const createColor = () => {
+    dispatch(addColor(colorName))
+      .unwrap()
+      .then(() => {
+        setColorModal(false);
+        enqueueSnackbar('Цвет успешно добавлен', { variant: 'success' });
+      })
+      .catch((err) => {
+        enqueueSnackbar('Ошибка при добавлении цвета', { variant: 'error' });
+        console.error('Ошибка:', err);
+      });
+  };
+
+  useEffect(() => {
+  try {
+    const color = new Option().style;
+    color.color = colorCode;
+    document.body.appendChild(color);
+  } catch {}
+}, [colorCode]);
+
+useEffect(() => {
+  const s = new Option().style;
+  s.color = colorName;
+  if (s.color !== "") {
+    const temp = document.createElement("div");
+    temp.style.color = colorName;
+    document.body.appendChild(temp);
+    const computed = getComputedStyle(temp).color;
+    document.body.removeChild(temp);
+    const rgbMatch = computed.match(/\d+/g);
+    if (rgbMatch) {
+      const [r, g, b] = rgbMatch.map(Number);
+      const hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+      setColorCode(hex);
+    }
+  }
+}, [colorName]);
 
   return (
     <div>
@@ -266,7 +315,7 @@ const AddProduct = () => {
           <div className="w-[100%] border-[#E2E8F0] border-[1px] rounded-[5px] flex-col gap-[20px]">
             <div className="flex p-[20px] w-[100%] flex-row justify-between items-center">
               <p className="font-[700]">Colour:</p>
-              <p className="text-[#2563EB]">Create new</p>
+              <button onClick={() => setColorModal(!colorModal)} className="text-[#2563EB]">Create new</button>
             </div>
             <div className="flex flex-row gap-y-[2vh] p-[20px] flex-wrap w-[100%] gap-[3%]">
               {colors?.map((el) => (
@@ -351,6 +400,35 @@ const AddProduct = () => {
           {addError}
         </Alert>
       </Snackbar>
+      {colorModal && (
+        <div className="bg-[#fff] top-[30vh] left-[40%] z-10 fixed border-[1px] flex flex-col gap-y-[10px] rounded-[5px] w-[40%] p-[20px]">
+          <div className="flex flex-row justify-between w-[100%]">
+            <p className="font-[600] text-[24px]">New color</p>
+            <button onClick={() => setColorModal(!colorModal)}>
+              <GridCloseIcon sx={{ color: "gray" }} />
+            </button>
+          </div>
+          <div className='w-[100%] my-[15px] flex gap-[10px]'>
+            <TextField
+              sx={{ width: "80%" }}
+              onChange={(e) => setColorName(e.target.value)}
+              value={colorName}
+              label="Color name"
+            />
+            <TextField
+              sx={{ width: "17%" }}
+              onChange={(e) => setColorCode(e.target.value)}
+              value={colorCode}
+              type='color'
+            />
+          </div>
+          <div className="flex flex-row justify-end gap-x-[20px]">
+            <Button onClick={() => setColorModal(false)} variant="outlined">Cancel</Button>
+            <Button onClick={createColor} variant="contained">Create</Button>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

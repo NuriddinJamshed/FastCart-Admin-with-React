@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
   getBrands,
   getCategories,
+  getColors,
   getProducts,
   getSubCategories,
 } from './getQuery';
@@ -138,6 +139,17 @@ const initialState = {
     error: null,
   },
 };
+
+export const addColor = createAsyncThunk("post/addColor", async (colorName, { dispatch }) => {
+  try {
+    await axios.post(`${API}/Color/add-color?ColorName=${colorName}`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    dispatch(getColors())
+  } catch (error) {
+    console.error(error);
+  }
+})
 
 const postSlice = createSlice({
   name: 'post',

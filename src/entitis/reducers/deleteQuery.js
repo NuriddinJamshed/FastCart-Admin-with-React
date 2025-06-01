@@ -66,7 +66,7 @@ const deleteSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // deleteProduct
+        
             .addCase(deleteProduct.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -82,7 +82,6 @@ const deleteSlice = createSlice({
                 state.success = false;
             })
 
-            // deleteBrand
             .addCase(deleteBrand.pending, (state) => {
                 state.loading = true;
                 state.error = null;
