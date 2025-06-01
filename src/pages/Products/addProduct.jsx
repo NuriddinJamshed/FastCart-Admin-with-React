@@ -27,13 +27,14 @@ import {
   clearAddProductState,
 } from '../../entitis/reducers/postQuery'
 import { GridCloseIcon } from '@mui/x-data-grid'
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
+import { deleteColor } from '../../entitis/reducers/deleteQuery'
 
 
 const AddProduct = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-    const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
 
 
   const categories = useSelector((store) => store.get.subCategories)
@@ -152,30 +153,30 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-  try {
-    const color = new Option().style;
-    color.color = colorCode;
-    document.body.appendChild(color);
-  } catch {}
-}, [colorCode]);
+    try {
+      const color = new Option().style;
+      color.color = colorCode;
+      document.body.appendChild(color);
+    } catch { }
+  }, [colorCode]);
 
-useEffect(() => {
-  const s = new Option().style;
-  s.color = colorName;
-  if (s.color !== "") {
-    const temp = document.createElement("div");
-    temp.style.color = colorName;
-    document.body.appendChild(temp);
-    const computed = getComputedStyle(temp).color;
-    document.body.removeChild(temp);
-    const rgbMatch = computed.match(/\d+/g);
-    if (rgbMatch) {
-      const [r, g, b] = rgbMatch.map(Number);
-      const hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
-      setColorCode(hex);
+  useEffect(() => {
+    const s = new Option().style;
+    s.color = colorName;
+    if (s.color !== "") {
+      const temp = document.createElement("div");
+      temp.style.color = colorName;
+      document.body.appendChild(temp);
+      const computed = getComputedStyle(temp).color;
+      document.body.removeChild(temp);
+      const rgbMatch = computed.match(/\d+/g);
+      if (rgbMatch) {
+        const [r, g, b] = rgbMatch.map(Number);
+        const hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+        setColorCode(hex);
+      }
     }
-  }
-}, [colorName]);
+  }, [colorName]);
 
   return (
     <div>
@@ -319,21 +320,30 @@ useEffect(() => {
             </div>
             <div className="flex flex-row gap-y-[2vh] p-[20px] flex-wrap w-[100%] gap-[3%]">
               {colors?.map((el) => (
-                <i
+                <div
                   key={el.id}
+                  className="relative w-[58px] h-[58px] rounded-full cursor-pointer"
                   onClick={() => setColorId(el.id)}
-                  className="w-[58px] h-[58px] text-center rounded-[50%]"
+
                   style={{
                     background: el.colorName,
-                    color: el.colorName,
-                    border:
-                      el.id === ColorId
-                        ? '5px solid #1E5EFF'
-                        : '1px solid #000',
+                    border: el.id === ColorId ? '5px solid #1E5EFF' : '1px solid #000',
                   }}
-                />
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(deleteColor(el.id))
+                    }}
+                    className="absolute top-[-6px] right-[-6px] w-[18px] h-[18px] bg-red-500 text-white rounded-full text-[12px] flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+                    style={{ zIndex: 10 }}
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
+
           </div>
           <div className="w-[100%] p-[20px] flex border-[#E2E8F0] border-[1px] rounded-[5px] flex-col gap-y-[30px]">
             <p className="font-[700]">Tags:</p>

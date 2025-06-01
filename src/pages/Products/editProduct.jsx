@@ -23,10 +23,15 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useNavigate } from 'react-router-dom';
+import { GridCloseIcon } from '@mui/x-data-grid'
+import { useSnackbar } from 'notistack';
+import { deleteColor } from '../../entitis/reducers/deleteQuery'
+import { addColor } from '../../entitis/reducers/postQuery';
 
 const EditProduct = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [BrandId, setBrandId] = useState(null);
   const [ProductName, setProductName] = useState('');
@@ -50,6 +55,10 @@ const EditProduct = () => {
   const colors = useSelector((store) => store.get.colors);
   const productId = useSelector((store) => store.get.productId);
   const product = useSelector((store) => store.get.product);
+
+  const [colorModal, setColorModal] = useState(false)
+  const [colorName, setColorName] = useState("")
+  const [colorCode, setColorCode] = useState("")
 
   useEffect(() => {
     if (productId) {
@@ -118,7 +127,7 @@ const EditProduct = () => {
       Quantity: Quantity,
       Weight: Weight,
       Size: Size,
-      Code: Code,
+      Code: Code.slice(0,Code.length-1),
       Price: Price,
       HasDiscount: DiscountPrice != null,
       DiscountPrice: DiscountPrice,
@@ -142,6 +151,45 @@ const EditProduct = () => {
     setErrorSnackbarOpen(false);
     dispatch(clearEditProductState());
   };
+
+  const createColor = () => {
+    dispatch(addColor(colorName))
+      .unwrap()
+      .then(() => {
+        setColorModal(false);
+        enqueueSnackbar('Цвет успешно добавлен', { variant: 'success' });
+      })
+      .catch((err) => {
+        enqueueSnackbar('Ошибка при добавлении цвета', { variant: 'error' });
+        console.error('Ошибка:', err);
+      });
+  };
+
+  useEffect(() => {
+    try {
+      const color = new Option().style;
+      color.color = colorCode;
+      document.body.appendChild(color);
+    } catch { }
+  }, [colorCode]);
+
+  useEffect(() => {
+    const s = new Option().style;
+    s.color = colorName;
+    if (s.color !== "") {
+      const temp = document.createElement("div");
+      temp.style.color = colorName;
+      document.body.appendChild(temp);
+      const computed = getComputedStyle(temp).color;
+      document.body.removeChild(temp);
+      const rgbMatch = computed.match(/\d+/g);
+      if (rgbMatch) {
+        const [r, g, b] = rgbMatch.map(Number);
+        const hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+        setColorCode(hex);
+      }
+    }
+  }, [colorName]);
 
   return (
     <div>
@@ -303,20 +351,31 @@ const EditProduct = () => {
           <div className="w-[100%] border-[#E2E8F0] border-[1px] rounded-[5px] flex-col gap-[20px]">
             <div className="flex p-[20px] w-[100%] flex-row justify-between items-center">
               <p className="font-[700]">Colour:</p>
-              <p className="text-[#2563EB]">Create new</p>
+              <button onClick={() => setColorModal(!colorModal)} className="text-[#2563EB]">Create new</button>
             </div>
             <div className="flex flex-row gap-y-[2vh] p-[20px] flex-wrap w-[100%] gap-[3%]">
               {colors?.map((el) => (
-                <i
+                <div
                   key={el.id}
+                  className="relative w-[58px] h-[58px] rounded-full cursor-pointer"
                   onClick={() => setColorId(el.id)}
-                  className="w-[58px] h-[58px] text-center rounded-[50%]"
+
                   style={{
                     background: el.colorName,
-                    color: el.colorName,
                     border: el.id === ColorId ? '5px solid #1E5EFF' : '1px solid #000',
                   }}
-                />
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(deleteColor(el.id))
+                    }}
+                    className="absolute top-[-6px] right-[-6px] w-[18px] h-[18px] bg-red-500 text-white rounded-full text-[12px] flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+                    style={{ zIndex: 10 }}
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -363,6 +422,34 @@ const EditProduct = () => {
           {editProductState.error}
         </Alert>
       </Snackbar>
+      {colorModal && (
+        <div className="bg-[#fff] top-[30vh] left-[40%] z-10 fixed border-[1px] flex flex-col gap-y-[10px] rounded-[5px] w-[40%] p-[20px]">
+          <div className="flex flex-row justify-between w-[100%]">
+            <p className="font-[600] text-[24px]">New color</p>
+            <button onClick={() => setColorModal(!colorModal)}>
+              <GridCloseIcon sx={{ color: "gray" }} />
+            </button>
+          </div>
+          <div className='w-[100%] my-[15px] flex gap-[10px]'>
+            <TextField
+              sx={{ width: "80%" }}
+              onChange={(e) => setColorName(e.target.value)}
+              value={colorName}
+              label="Color name"
+            />
+            <TextField
+              sx={{ width: "17%" }}
+              onChange={(e) => setColorCode(e.target.value)}
+              value={colorCode}
+              type='color'
+            />
+          </div>
+          <div className="flex flex-row justify-end gap-x-[20px]">
+            <Button onClick={() => setColorModal(false)} variant="outlined">Cancel</Button>
+            <Button onClick={createColor} variant="contained">Create</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

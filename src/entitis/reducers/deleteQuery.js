@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { getBrands, getProducts, getSubCategories } from './getQuery';
+import { getBrands, getColors, getProducts, getSubCategories } from './getQuery';
 
 const API = import.meta.env.VITE_API;
 const token = localStorage.getItem("adminToken")
@@ -48,6 +48,19 @@ export const deleteSubCategory = createAsyncThunk('delete/deleteSubCategory', as
     }
 })
 
+export const deleteColor = createAsyncThunk("delete/deleteColor",async(id,{dispatch})=>{
+    try {
+        await axios.delete(`${API}/Color/delete-color?id=${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        dispatch(getColors())
+    } catch (error) {
+        console.error(error);
+    }
+})
+
 const initialState = {
     loading: false,
     error: null,
@@ -66,7 +79,7 @@ const deleteSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-        
+
             .addCase(deleteProduct.pending, (state) => {
                 state.loading = true;
                 state.error = null;
